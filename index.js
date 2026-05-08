@@ -39,14 +39,60 @@ const run = async () => {
         })
 
         // user id
-      app.get('/users/:id', async (req, res) => {
-    const id = req.params.id ;
-    const query = {
-        _id: new ObjectId(id)
-    };
-    const user = await usersCollection.findOne(query);
-    res.send(user)
-});
+        app.get('/users/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = {
+                _id: new ObjectId(id)
+            };
+            const user = await usersCollection.findOne(query);
+            res.send(user)
+        });
+
+        // post
+        app.post('/users', async (req, res) => {
+            const newUser = req.body;
+            console.log('user', newUser)
+            const result = await usersCollection.insertOne(newUser);
+            res.send(result)
+        })
+
+
+        // edit user info >> PATCH
+        app.patch('/users/:id', async (req, res) => {
+            const modifiedUser = req.body;
+            const id = req.params.id;
+            const filter = {
+                _id: new ObjectId(id)
+            };
+
+            const UpdateDocument = {
+                $set:{
+                    name:modifiedUser.name,
+                    email:modifiedUser.email,
+                    role:modifiedUser.role
+                }
+            }
+
+            const result = await usersCollection.updateOne(filter , UpdateDocument) ;           console.log(result)
+            res.send(result)
+
+
+        })
+
+
+
+
+        // user delete
+        app.delete('/users/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = {
+                _id: new ObjectId(id)
+            };
+            const results = await usersCollection.deleteOne(query);
+            res.send(results)
+        })
+
+
 
 
     } finally {
